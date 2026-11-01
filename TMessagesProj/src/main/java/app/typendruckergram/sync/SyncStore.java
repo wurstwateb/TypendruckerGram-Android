@@ -2,19 +2,28 @@ package app.typendruckergram.sync;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.security.keystore.KeyGenParameterSpec;
+import android.security.keystore.KeyProperties;
 import android.util.Base64;
 
 import androidx.room.Room;
-import androidx.security.crypto.EncryptedSharedPreferences;
-import androidx.security.crypto.MasterKey;
 
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.FileLog;
 
+import java.nio.charset.StandardCharsets;
+import java.security.KeyStore;
+
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.GCMParameterSpec;
+
 /**
  * Local state of TypendruckerGram Sync: the outgoing queue and applied keys in
  * typsync.db (separate from AyuGram's database, so its migrations stay
- * untouched), keys and settings in encrypted preferences.
+ * untouched), settings in private preferences with the token and owner key
+ * wrapped by the Android Keystore.
  */
 public final class SyncStore {
 
@@ -60,23 +69,68 @@ public final class SyncStore {
         if (prefs == null) {
             synchronized (SyncStore.class) {
                 if (prefs == null) {
-                    Context context = ApplicationLoader.applicationContext;
-                    try {
-                        MasterKey key = new MasterKey.Builder(context)
-                                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-                                .build();
-                        prefs = EncryptedSharedPreferences.create(context, "typsync_state", key,
-                                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM);
-                    } catch (Exception e) {
-                        // Keystore broken on some devices; the app sandbox still protects the file.
-                        FileLog.e("typsync: encrypted prefs unavailable", e);
-                        prefs = context.getSharedPreferences("typsync_state_plain", Context.MODE_PRIVATE);
-                    }
+                    prefs = ApplicationLoader.applicationContext.getSharedPreferences("typsync_state", Context.MODE_PRIVATE);
                 }
             }
         }
         return prefs;
+    }
+
+    // Token and owner key are wrapped with a non-exportable Android Keystore key.
+    private static final String KEYSTORE_ALIAS = "typsync_state";
+
+    private static SecretKey keystoreKey() throws Exception {
+        KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
+        keyStore.load(null);
+        if (keyStore.containsAlias(KEYSTORE_ALIAS)) {
+            return ((KeyStore.SecretKeyEntry) keyStore.getEntry(KEYSTORE_ALIAS, null)).getSecretKey();
+        }
+        KeyGenerator generator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore");
+        generator.init(new KeyGenParameterSpec.Builder(KEYSTORE_ALIAS,
+                KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
+                .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+                .setKeySize(256)
+                .build());
+        return generator.generateKey();
+    }
+
+    private static String wrap(byte[] secret) {
+        try {
+            Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+            cipher.init(Cipher.ENCRYPT_MODE, keystoreKey());
+            byte[] iv = cipher.getIV();
+            byte[] sealed = cipher.doFinal(secret);
+            byte[] out = new byte[1 + iv.length + sealed.length];
+            out[0] = (byte) iv.length;
+            System.arraycopy(iv, 0, out, 1, iv.length);
+            System.arraycopy(sealed, 0, out, 1 + iv.length, sealed.length);
+            return "k:" + Base64.encodeToString(out, Base64.NO_WRAP);
+        } catch (Exception e) {
+            // Keystore broken on some devices; the app sandbox still protects the file.
+            FileLog.e("typsync: keystore unavailable", e);
+            return "p:" + Base64.encodeToString(secret, Base64.NO_WRAP);
+        }
+    }
+
+    private static byte[] unwrap(String value) {
+        if (value == null) {
+            return null;
+        }
+        try {
+            byte[] data = Base64.decode(value.substring(2), Base64.NO_WRAP);
+            if (value.startsWith("p:")) {
+                return data;
+            }
+            int ivLength = data[0];
+            Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+            cipher.init(Cipher.DECRYPT_MODE, keystoreKey(),
+                    new GCMParameterSpec(128, data, 1, ivLength));
+            return cipher.doFinal(data, 1 + ivLength, data.length - 1 - ivLength);
+        } catch (Exception e) {
+            FileLog.e("typsync: cannot unwrap stored secret", e);
+            return null;
+        }
     }
 
     public static boolean isEnabled() {
@@ -95,8 +149,16 @@ public final class SyncStore {
         return prefs().getString("relayUrl", DEFAULT_RELAY_URL);
     }
 
+    // Unwrapped once per process: the Keystore is slow and the worker asks every tick.
+    private static volatile String cachedToken;
+    private static volatile byte[] cachedOwnerPrivate;
+
     public static String getToken() {
-        return prefs().getString("token", null);
+        if (cachedToken == null) {
+            byte[] token = unwrap(prefs().getString("token", null));
+            cachedToken = token == null ? null : new String(token, StandardCharsets.UTF_8);
+        }
+        return cachedToken;
     }
 
     public static String getOwnerId() {
@@ -108,7 +170,10 @@ public final class SyncStore {
     }
 
     public static byte[] getOwnerPrivate() {
-        return bytes("ownerPrivate");
+        if (cachedOwnerPrivate == null) {
+            cachedOwnerPrivate = unwrap(prefs().getString("ownerPrivate", null));
+        }
+        return cachedOwnerPrivate;
     }
 
     public static byte[] getOwnerPublic() {
@@ -120,16 +185,20 @@ public final class SyncStore {
                 .putString("relayUrl", relayUrl)
                 .putString("ownerId", ownerId)
                 .putString("deviceId", deviceId)
-                .putString("token", token)
-                .putString("ownerPrivate", Base64.encodeToString(ownerPrivate, Base64.NO_WRAP))
+                .putString("token", wrap(token.getBytes(StandardCharsets.UTF_8)))
+                .putString("ownerPrivate", wrap(ownerPrivate))
                 .putString("ownerPublic", Base64.encodeToString(SyncCrypto.publicFromPrivate(ownerPrivate), Base64.NO_WRAP))
                 .putLong("cursor", 0)
                 .putBoolean("enabled", true)
-                .apply();
+                .commit();
+        cachedToken = token;
+        cachedOwnerPrivate = ownerPrivate;
     }
 
     public static void clearCredentials() {
-        prefs().edit().clear().apply();
+        prefs().edit().clear().commit();
+        cachedToken = null;
+        cachedOwnerPrivate = null;
     }
 
     public static long getCursor() {
