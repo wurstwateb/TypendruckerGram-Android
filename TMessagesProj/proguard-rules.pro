@@ -228,3 +228,7 @@
     static boolean frozen;
     static int bridgeState();
 }
+
+# TypendruckerGram Sync: only the X25519 math of BouncyCastle is used.
+-dontwarn org.bouncycastle.**
+-dontwarn javax.naming.**

@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import app.typendruckergram.sync.SyncSender;
 import tw.nekomimi.nekogram.utils.FileUtil;
 
 public class AyuMessagesController {
@@ -169,6 +170,7 @@ public class AyuMessagesController {
                     return null;
                 }
         );
+        SyncSender.onEdited(prefs.getAccountId(), revision, newMessage.edit_date);
 
         AndroidUtilities.runOnUIThread(() -> NotificationCenter.getInstance(prefs.getAccountId()).postNotificationName(AyuConstants.MESSAGE_EDITED_NOTIFICATION, prefs.getDialogId(), prefs.getMessageId()));
     }
@@ -242,6 +244,7 @@ public class AyuMessagesController {
         if (fakeMsgId == null) {
             return;
         }
+        SyncSender.onDeleted(prefs.getAccountId(), deletedMessage);
 
         if (msg != null && msg.reactions != null) {
             processDeletedReactions(fakeMsgId, msg.reactions);

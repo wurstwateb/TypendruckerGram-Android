@@ -38,6 +38,7 @@ public class OpenExteraSettingsActivity extends BaseNekoSettingsActivity {
     private int chatsRow;
     private int pluginsRow;
     private int otherRow;
+    private int syncRow;
     private int categoriesDividerRow;
 
     private int linksHeaderRow;
@@ -62,6 +63,7 @@ public class OpenExteraSettingsActivity extends BaseNekoSettingsActivity {
         chatsRow = addRow("chats");
         pluginsRow = addRow("plugins");
         otherRow = addRow("other");
+        syncRow = addRow("typsync");
         categoriesDividerRow = addRow();
 
         linksHeaderRow = addRow("linksHeader");
@@ -190,6 +192,8 @@ public class OpenExteraSettingsActivity extends BaseNekoSettingsActivity {
             presentFragment(new app.exteraless.plugins.ui.PluginsActivity());
         } else if (position == otherRow) {
             presentFragment(new OpenExteraOtherActivity());
+        } else if (position == syncRow) {
+            presentFragment(new app.typendruckergram.sync.SyncSettingsActivity());
         } else if (position == channelRow) {
             getMessagesController().openByUserName("exteraless", this, 1);
         } else if (position == sourceRow) {
@@ -247,7 +251,9 @@ public class OpenExteraSettingsActivity extends BaseNekoSettingsActivity {
                     } else if (position == pluginsRow) {
                         cell.setTextAndIcon(getString(R.string.OpenExteraPlugins), R.drawable.msg_plugins, true);
                     } else if (position == otherRow) {
-                        cell.setTextAndIcon(getString(R.string.OpenExteraOther), R.drawable.msg_fave, false);
+                        cell.setTextAndIcon(getString(R.string.OpenExteraOther), R.drawable.msg_fave, true);
+                    } else if (position == syncRow) {
+                        cell.setTextAndIcon(getString(R.string.TypSyncTitle), R.drawable.msg_retry, false);
                     } else if (position == channelRow) {
                         cell.setTextAndValueAndIcon(getString(R.string.ProfileChannel),
                                 "@exteraless", R.drawable.msg_channel, true);

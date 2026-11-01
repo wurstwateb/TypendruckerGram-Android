@@ -1,0 +1,30 @@
+name: Sync
+
+on:
+  push:
+    paths:
+      - 'TMessagesProj/src/main/java/app/typendruckergram/sync/**'
+      - 'tests/sync/**'
+      - 'docs/sync/**'
+      - '.github/workflows/sync.yml'
+  workflow_dispatch:
+
+jobs:
+  vectors:
+    name: Sync test vectors
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+      - name: Run
+        run: |
+          mkdir -p /tmp/jars
+          curl -sSfLo /tmp/jars/bcprov.jar https://repo1.maven.org/maven2/org/bouncycastle/bcprov-jdk18on/1.80/bcprov-jdk18on-1.80.jar
+          curl -sSfLo /tmp/jars/gson.jar https://repo1.maven.org/maven2/com/google/code/gson/gson/2.13.1/gson-2.13.1.jar
+          CP=/tmp/jars/bcprov.jar:/tmp/jars/gson.jar
+          S=TMessagesProj/src/main/java/app/typendruckergram/sync
+          javac -cp $CP -d /tmp/out $S/SyncCrypto.java $S/SyncEvents.java tests/sync/SyncVectorsTest.java
+          java -cp /tmp/out:$CP SyncVectorsTest docs/sync/test-vectors.json

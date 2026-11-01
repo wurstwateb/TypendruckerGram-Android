@@ -444,6 +444,9 @@ dependencies {
     // add for save deleted messages
     implementation 'androidx.room:room-runtime:2.8.4'
     annotationProcessor 'androidx.room:room-compiler:2.8.4'
+    // TypendruckerGram Sync: X25519
+    implementation 'org.bouncycastle:bcprov-jdk18on:1.80'
+    implementation 'androidx.security:security-crypto:1.1.0'
     // add for keep formatting in translations
     implementation 'org.apache.commons:commons-text:1.15.0'
     // translator from nekogram

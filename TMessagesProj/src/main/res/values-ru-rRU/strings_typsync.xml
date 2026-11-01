@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Настройки TypendruckerGram Sync. -->
+<resources>
+    <string name="TypSyncTitle">Синхронизация с ПК</string>
+    <string name="TypSyncSetupHeader">Подключение</string>
+    <string name="TypSyncJoin">Подключить по коду</string>
+    <string name="TypSyncCreate">Начать синхронизацию здесь</string>
+    <string name="TypSyncSetupInfo">Удалённые и изменённые сообщения, сохранённые здесь, передаются на другие ваши устройства TypendruckerGram через сервер обмена. Всё шифруется на устройстве, сервер хранит данные не дольше 5 дней. Если синхронизация уже работает на ПК, получите там код и подключитесь по нему. Иначе начните синхронизацию здесь с инвайтом сервера.</string>
+    <string name="TypSyncInviteHint">Инвайт сервера</string>
+    <string name="TypSyncEnabled">Синхронизировать удалённые и изменённые</string>
+    <string name="TypSyncDevicesHeader">Устройства</string>
+    <string name="TypSyncShowCode">Добавить устройство</string>
+    <string name="TypSyncCodeText">Введите этот код на другом устройстве в течение 10 минут:\n\n**%1$s**</string>
+    <string name="TypSyncMediaLimit">Лимит размера медиа</string>
+    <string name="TypSyncMediaOff">Только текст</string>
+    <string name="TypSyncRecommended">рекомендуется</string>
+    <string name="TypSyncMediaInfo">Файлы больше лимита не передаются: другие устройства увидят только их тип и размер.</string>
+    <string name="TypSyncNow">Синхронизировать сейчас</string>
+    <string name="TypSyncStarted">Синхронизация…</string>
+    <string name="TypSyncDisconnect">Отключить это устройство</string>
+    <string name="TypSyncDisconnectInfo">Устройство перестанет синхронизироваться и забудет ключи. Уже сохранённые сообщения останутся.</string>
+    <string name="TypSyncDisconnected">Устройство отключено</string>
+    <string name="TypSyncCreated">Синхронизация запущена. Добавьте ПК через «Добавить устройство».</string>
+    <string name="TypSyncJoined">Подключено</string>
+    <string name="TypSyncStatusLast">Последняя синхронизация %1$s</string>
+    <string name="TypSyncStatusNever">Ещё не синхронизировалось</string>
+    <string name="TypSyncStatusError">Ошибка синхронизации: %1$s</string>
+    <string name="TypSyncTrimmed">На сервере кончилось место, часть старых данных удалена.</string>
+    <string name="TypSyncBadInvite">Неверный инвайт сервера</string>
+    <string name="TypSyncBadCode">Неверный или просроченный код</string>
+    <string name="TypSyncRateLimited">Слишком много попыток, повторите через несколько минут</string>
+</resources>

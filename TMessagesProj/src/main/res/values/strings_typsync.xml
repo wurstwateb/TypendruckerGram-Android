@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TypendruckerGram Sync settings. -->
+<resources>
+    <string name="TypSyncTitle">Sync with desktop</string>
+    <string name="TypSyncSetupHeader">Set up</string>
+    <string name="TypSyncJoin">Connect with a code</string>
+    <string name="TypSyncCreate">Start sync on this device</string>
+    <string name="TypSyncSetupInfo">Deleted and edited messages saved here are shared with your other TypendruckerGram devices through an exchange server. Everything is encrypted on the device; the server keeps it for up to 5 days. If sync already runs on your PC, get a code there and connect with it. Otherwise start sync here with the server invite.</string>
+    <string name="TypSyncInviteHint">Server invite</string>
+    <string name="TypSyncEnabled">Sync deleted and edited messages</string>
+    <string name="TypSyncDevicesHeader">Devices</string>
+    <string name="TypSyncShowCode">Add a device</string>
+    <string name="TypSyncCodeText">Enter this code on the other device within 10 minutes:\n\n**%1$s**</string>
+    <string name="TypSyncMediaLimit">Media size limit</string>
+    <string name="TypSyncMediaOff">Text only</string>
+    <string name="TypSyncRecommended">recommended</string>
+    <string name="TypSyncMediaInfo">Files above the limit are not sent; other devices see their type and size only.</string>
+    <string name="TypSyncNow">Sync now</string>
+    <string name="TypSyncStarted">Syncing…</string>
+    <string name="TypSyncDisconnect">Disconnect this device</string>
+    <string name="TypSyncDisconnectInfo">This device stops syncing and forgets the keys. Messages already saved here stay.</string>
+    <string name="TypSyncDisconnected">This device is disconnected</string>
+    <string name="TypSyncCreated">Sync started. Add your PC with \"Add a device\".</string>
+    <string name="TypSyncJoined">Connected</string>
+    <string name="TypSyncStatusLast">Last synced %1$s</string>
+    <string name="TypSyncStatusNever">Not synced yet</string>
+    <string name="TypSyncStatusError">Sync error: %1$s</string>
+    <string name="TypSyncTrimmed">The server ran out of space and dropped some old data.</string>
+    <string name="TypSyncBadInvite">Wrong server invite</string>
+    <string name="TypSyncBadCode">Wrong or expired code</string>
+    <string name="TypSyncRateLimited">Too many attempts, try again in a few minutes</string>
+</resources>
