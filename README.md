@@ -1,3 +1,16 @@
+# TypendruckerGram for Android
+
+Android-клиент TypendruckerGram — форк [exteraless](https://github.com/exteraless/exteraless).
+Сохраняет удалённые и изменённые сообщения и (в разработке) синхронизирует их с
+TypendruckerGram Desktop через сервер обмена.
+
+* Имя пакета: `com.typendruckergram.app` — ставится рядом с exteraless.
+* Десктоп: [wurstwateb/AyuGramDesktop](https://github.com/wurstwateb/AyuGramDesktop)
+
+Ниже — оригинальный README exteraless.
+
+---
+
 <div align="center">
 
 <img src="assets/logo.png" width="128" alt="exteraless">

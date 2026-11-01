@@ -52,7 +52,7 @@
     <string name="OEGeneralImportEtgDone">已导入设置：%1$d 项</string>
     <string name="OEGeneralResetSettings">重置设置</string>
     <string name="OEGeneralResetSettingsInfo">所有设置都将恢复为默认值，应用将重新启动。</string>
-    <string name="OEGeneralResetSettingsDone">exteraless 设置已重置。</string>
+    <string name="OEGeneralResetSettingsDone">TypendruckerGram 设置已重置。</string>
     <string name="OEGeneralDeleteAccount">删除账号</string>
     <string name="DeepLFormalityDefault">语气：随原文</string>
     <string name="DeepLFormalityInformal">语气：非正式</string>
@@ -94,7 +94,7 @@
     <string name="OEGeneralMapProvider">地图提供方</string>
     <string name="OEGeneralMapPreview">位置预览</string>
     <string name="OEGeneralMapDriftingFix">修正地图偏移</string>
-    <string name="OECrashTitle">exteraless 已崩溃</string>
+    <string name="OECrashTitle">TypendruckerGram 已崩溃</string>
     <string name="OEGeneralNetworkHeader">网络</string>
     <string name="OEPrivacyFalseBottom">私密空间</string>
     <string name="OEPrivacyFalseBottomShowIn">在“%1$s”中显示</string>
